@@ -11,11 +11,18 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestTemplate;
+
 import com.slytherin.project.dao.AddressRepository;
 import com.slytherin.project.dao.CarddetailsRepo;
 import com.slytherin.project.dao.CardlimitRepo;
@@ -26,11 +33,13 @@ import com.slytherin.project.model.CustomerProfileData;
 import com.slytherin.project.model.DAOUser;
 import com.slytherin.project.model.ModelAddress;
 import com.slytherin.project.model.ModelCardlimit;
+import com.slytherin.project.model.ModelInputCardDetails;
 import com.slytherin.project.model.ModelSavedCardDetails;
 import com.slytherin.project.model.ModelTransaction;
 
 
 @Service
+
 public class CustomerService {
 
 	@Autowired
@@ -51,11 +60,14 @@ public class CustomerService {
 	@Autowired 
 	AddressRepository addressRepo;
 	
+	@Autowired
+	private Environment env;
+	
 	    private static SecretKeySpec secretKey;
 	    private static byte[] key;
 	    private static final String ALGORITHM = "AES";
 	    private String secretkey="slytherin";
-
+	    
 	    public void prepareSecreteKey(String myKey) {
 	        MessageDigest sha = null;
 	        try {
@@ -91,6 +103,83 @@ public class CustomerService {
 	            System.out.println("Error while decrypting: " + e.toString());
 	        }
 	        return null;
+	    }
+	    
+	    
+	    public Map<String, Object> getCreditDetailsFromBank(){
+	    	try {
+				RestTemplate restTemplate = new RestTemplate();
+				ModelSavedCardDetails obj = repoCardDetails.findCard(getUserId());
+				ModelInputCardDetails ModelInputCardDetails = new ModelInputCardDetails(obj.getCard_id(), 
+						getUserId());
+				
+				HttpHeaders header = new HttpHeaders();
+				header.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<ModelInputCardDetails> request = new HttpEntity<ModelInputCardDetails>(ModelInputCardDetails, header);
+				Map<String, Object> map= restTemplate.postForObject(env.getProperty("bankServerGetCardDetailsUrl").toString(),request ,Map.class);
+				 return map;
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println("Error while getting card details: " + e.toString());
+			}
+			return null;
+	    }
+	    
+	    public Map<String, Object> getBilledTxnFromBank(){
+	    	try {
+	    		RestTemplate restTemplate = new RestTemplate();
+				ModelSavedCardDetails obj = repoCardDetails.findCard(getUserId());
+				ModelInputCardDetails ModelInputCardDetails = new ModelInputCardDetails(obj.getCard_id(), 
+						getUserId());
+				
+				HttpHeaders header = new HttpHeaders();
+				header.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<ModelInputCardDetails> request = new HttpEntity<ModelInputCardDetails>(ModelInputCardDetails, header);
+				Map<String, Object> map= restTemplate.postForObject(env.getProperty("bankServerGetBilledTxnUrl").toString(),request ,Map.class);
+				 return map;
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println("Error while getting billed txn: " + e.toString());
+			}
+			return null;
+	    }
+	    
+	    public Map<String, Object> getUnBilledTxnFromBank(){
+	    	try {
+	    		RestTemplate restTemplate = new RestTemplate();
+				ModelSavedCardDetails obj = repoCardDetails.findCard(getUserId());
+				ModelInputCardDetails ModelInputCardDetails = new ModelInputCardDetails(obj.getCard_id(), 
+						getUserId());
+				
+				HttpHeaders header = new HttpHeaders();
+				header.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<ModelInputCardDetails> request = new HttpEntity<ModelInputCardDetails>(ModelInputCardDetails, header);
+				Map<String, Object> map= restTemplate.postForObject(env.getProperty("bankServerGetUnBilledTxnUrl").toString(),request ,Map.class);
+				 return map;
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println("Error while getting unbilled txn: " + e.toString());
+			}
+			return null;
+	    }
+	    
+	    public Map<String, Object> getRetailTxnFromBank(){
+	    	try {
+	    		RestTemplate restTemplate = new RestTemplate();
+				ModelSavedCardDetails obj = repoCardDetails.findCard(getUserId());
+				ModelInputCardDetails ModelInputCardDetails = new ModelInputCardDetails(obj.getCard_id(), 
+						getUserId());
+				
+				HttpHeaders header = new HttpHeaders();
+				header.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<ModelInputCardDetails> request = new HttpEntity<ModelInputCardDetails>(ModelInputCardDetails, header);
+				Map<String, Object> map= restTemplate.postForObject(env.getProperty("bankServerGetRetailTxnUrl").toString(),request ,Map.class);
+				 return map;
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.out.println("Error while getting retail txn: " + e.toString());
+			}
+			return null;
 	    }
 
 

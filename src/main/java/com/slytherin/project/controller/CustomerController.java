@@ -34,25 +34,26 @@ public class CustomerController {
 
 	@PostMapping("/creditdetails")
 	public ResponseEntity<?> cardinfo() {
-		Map<String, Object> map = service.creditcarddetails();
+		Map<String, Object> map = service.getCreditDetailsFromBank();
+		
 		return ResponseEntity.ok(map);
 	}
 
 	@PostMapping("/unbilled-transactions")
 	public ResponseEntity<?> getUnbilledTrans() {
-		Map<String, Object> map = service.getUnbilledTxn();
+		Map<String, Object> map = service.getUnBilledTxnFromBank();
 		return ResponseEntity.ok(map);
 	}
 
 	@PostMapping("/billed-transactions")
 	public ResponseEntity<?> getBilledTrans() {
-		Map<String, Object> map = service.getBilledTxn();
+		Map<String, Object> map = service.getBilledTxnFromBank();
 		return ResponseEntity.ok(map);
 	}
 
 	@PostMapping("/retail-transactions")
 	public ResponseEntity<?> getRetailTransactions() {
-		Map<String, Object> map = service.getRetailTxn();
+		Map<String, Object> map = service.getRetailTxnFromBank();
 		return ResponseEntity.ok(map);
 	}
 	
