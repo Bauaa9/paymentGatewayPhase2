@@ -24,6 +24,7 @@ import com.slytherin.project.config.JwtTokenUtil;
 import com.slytherin.project.model.JwtRequest;
 import com.slytherin.project.model.JwtResponse;
 import com.slytherin.project.model.UserDTO;
+import com.slytherin.project.service.JwtMerchantDetailsService;
 import com.slytherin.project.service.JwtUserDetailsService;
 
 import io.jsonwebtoken.impl.DefaultClaims;
@@ -40,6 +41,9 @@ public class JwtAuthenticationController {
 
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
+	
+	@Autowired
+	private JwtMerchantDetailsService merchantDetailsService;
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -47,6 +51,18 @@ public class JwtAuthenticationController {
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
 		final UserDetails userDetails = userDetailsService
+				.loadUserByUsername(authenticationRequest.getUsername());
+
+		final String token = jwtTokenUtil.generateToken(userDetails);
+		return ResponseEntity.ok(new JwtResponse(token));
+	}
+	
+	@RequestMapping(value = "/authenticate-merchant", method = RequestMethod.POST)
+	public ResponseEntity<?> createAuthenticationTokenForMerchant(@RequestBody JwtRequest authenticationRequest) throws Exception {
+		System.out.println("sdflsdfn");
+		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+
+		final UserDetails userDetails = merchantDetailsService
 				.loadUserByUsername(authenticationRequest.getUsername());
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
