@@ -29,6 +29,7 @@ import com.slytherin.project.model.Transaction;
 import com.slytherin.project.service.MerchantService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class PaymentGatewayController {
 
 	private static Logger LOG = LoggerFactory.getLogger(PaymentGatewayController.class);
@@ -37,14 +38,15 @@ public class PaymentGatewayController {
 	MerchantService merchantService;
 
 	@PostMapping(path = "/generate-id", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PgRefNum> generateId(@RequestBody Transaction newXaction) {
+	public ResponseEntity<?> generateId(@RequestBody Transaction newXaction) {
 
-		ResponseEntity<PgRefNum> result = new ResponseEntity<PgRefNum>(null);
+//		ResponseEntity<PgRefNum> result = new ResponseEntity<PgRefNum>(null);
 		try {
 
-			result = merchantService.verifyAndGetId(newXaction);
+			ResponseEntity<PgRefNum> result= merchantService.verifyAndGetId(newXaction);
+			System.out.println(result);
 			LOG.info("Transaction created");
-			return result;
+			return ResponseEntity.ok(result);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something Went wrong. Try again later", e);
 		}
@@ -60,6 +62,7 @@ public class PaymentGatewayController {
 			response = merchantService.forwardDataToBank(paymentDetails);
 			return response;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something Went wrong. Try again later", e);
 		}
 		

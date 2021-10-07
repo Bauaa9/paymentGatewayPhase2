@@ -47,17 +47,17 @@ public class MerchantService {
 	MerchantTransactionRepository merchantTxnRepo;
 
 	public ResponseEntity<PgRefNum> verifyAndGetId(Transaction newXaction) throws Exception{
-		boolean verificationStatus = true;
+		String verificationStatus = null;
 		verificationStatus = verifyMerchant(newXaction.getMerchentId(), newXaction.getSecretKey());
 		
-		if (verificationStatus == true) {
+		if (verificationStatus != null) {
 			
 			UUID uuid = UUID.randomUUID();
 	        String uuidAsString = uuid.toString();
 	        
 			PgRefNum tokenId = new PgRefNum();
 			tokenId.setPgRefId(uuidAsString);
-			
+			tokenId.setMerchantName(verificationStatus);
 			LOG.info("Merchant Verification sucessfull");
 			
 			MerchantTransaction merchantTransaction = new MerchantTransaction();
@@ -67,7 +67,7 @@ public class MerchantService {
 			merchantTransaction.setStatus("Pending");
 			
 			merchantTxnRepo.save(merchantTransaction);
-			
+			System.out.println(tokenId.getPgRefId());
 			return new ResponseEntity<PgRefNum>(tokenId, HttpStatus.OK);
 
 		} else {
@@ -77,14 +77,14 @@ public class MerchantService {
 
 	}
 
-	public boolean verifyMerchant(String merchantId, String secretKey) throws Exception {
+	public String verifyMerchant(String merchantId, String secretKey) throws Exception {
 		
 		MerchantData mer = merchantDataRepo.findById(merchantId).get();
 		
 		if (merchantId.equals(mer.getMerchantId()) && secretKey.equals(mer.getSecretKey())) {
-			return true;
+			return mer.getMerchantName();
 		} else {
-			return false;
+			return null;
 		}
 	}
 	

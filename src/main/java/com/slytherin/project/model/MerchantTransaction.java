@@ -17,9 +17,9 @@ public class MerchantTransaction {
 	String paymentType;
 	
 	@Column(name="total_amount")
-	String totalAmount;
+	int totalAmount;
 	
-	@Column(name="date_time")
+	@Column(name="date")
 	String dataTime;
 	
 	@Column(name="order_id")
@@ -31,7 +31,7 @@ public class MerchantTransaction {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MerchantTransaction(String pgRefId, String merchantId, String paymentType, String totalAmount,
+	public MerchantTransaction(String pgRefId, String merchantId, String paymentType, int totalAmount,
 			String dataTime, String orderId, String status) {
 		super();
 		this.pgRefId = pgRefId;
@@ -67,11 +67,11 @@ public class MerchantTransaction {
 		this.paymentType = paymentType;
 	}
 
-	public String getTotalAmount() {
+	public int getTotalAmount() {
 		return totalAmount;
 	}
 
-	public void setTotalAmount(String totalAmount) {
+	public void setTotalAmount(int totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 
