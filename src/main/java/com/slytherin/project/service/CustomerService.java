@@ -76,14 +76,14 @@ public class CustomerService {
 
 	}
 
-	public String encrypt(String strToEncrypt, String secret) throws Exception {
-
-		prepareSecreteKey(secret);
-		Cipher cipher = Cipher.getInstance(ALGORITHM);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
-
-	}
+//	public String encrypt(String strToEncrypt, String secret) throws Exception {
+//
+//		prepareSecreteKey(secret);
+//		Cipher cipher = Cipher.getInstance(ALGORITHM);
+//		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+//		return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+//
+//	}
 
 	public String decrypt(String strToDecrypt, String secret) throws Exception {
 
@@ -219,7 +219,7 @@ public class CustomerService {
 
 		cd.setCustomer_id(getUserId());
 		cd.setCard_id((int) repoCardDetails.count() + 1);
-		cd.setCard_number(encrypt(cd.getCard_number(), secretkey));
+		cd.setCard_number(cd.getCard_number());
 		System.out.println(cd.getCard_number());
 		System.out.println(decrypt(cd.getCard_number(), secretkey));
 
