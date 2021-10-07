@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.slytherin.project.model.DAOUser;
-import com.slytherin.project.model.UserDTO;
 
 
 @Repository
