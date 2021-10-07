@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.slytherin.project.model.ModelAddress;
-import com.slytherin.project.model.ModelTransaction;
 
 @Repository
 public interface AddressRepository extends JpaRepository<ModelAddress, Integer> {
