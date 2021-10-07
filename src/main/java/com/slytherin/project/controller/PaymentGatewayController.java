@@ -1,6 +1,7 @@
 package com.slytherin.project.controller;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Tejas Abhang
@@ -18,10 +19,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.slytherin.project.model.FinalResult;
+import com.slytherin.project.model.MerchantTransaction;
+import com.slytherin.project.model.Merchantdashboard;
+import com.slytherin.project.model.MerchantlastWeekData;
 import com.slytherin.project.model.OtpData;
 import com.slytherin.project.model.PaymentDetails;
 import com.slytherin.project.model.PgRefNum;
@@ -94,5 +99,44 @@ public class PaymentGatewayController {
 		}
 
 	}
-
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping("/show")
+	public List<MerchantTransaction> findall() {
+		List<MerchantTransaction> ph=merchantService.getAllData();
+		System.out.println(ph);
+		return ph;
+	}
+	
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping("/graphdata/{durationForGraph}")
+	public List<MerchantlastWeekData>lastWeek(@PathVariable("durationForGraph") String y) {
+		List<MerchantlastWeekData> ph=merchantService.lastWeek(y);
+		System.out.println(ph);
+		return ph;
+	}
+	
+	
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping("/filterBy/{time}")
+	public List<Merchantdashboard> filter(@PathVariable("time") String time){
+		
+		return merchantService.forFilter(time);
+	}
+	
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping("/firstrow")
+	public List<Merchantdashboard> forFirstRow(){
+		return merchantService.forFirstRow();
+	}
+	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@RequestMapping("/percentagedata")
+	public List<Integer> percentageData(){
+		return merchantService.percentage();
+	}
+	
 }

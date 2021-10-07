@@ -1,7 +1,9 @@
 package com.slytherin.project.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +28,8 @@ import com.slytherin.project.dao.MerchantTransactionRepository;
 import com.slytherin.project.model.FinalResult;
 import com.slytherin.project.model.MerchantData;
 import com.slytherin.project.model.MerchantTransaction;
+import com.slytherin.project.model.Merchantdashboard;
+import com.slytherin.project.model.MerchantlastWeekData;
 import com.slytherin.project.model.OtpData;
 import com.slytherin.project.model.PaymentDetails;
 import com.slytherin.project.model.PgRefNum;
@@ -137,5 +141,346 @@ public class MerchantService {
 		Map<String, String> response = template.postForObject(url, request, Map.class);
 		System.out.println(response);
 		return response;
+	}
+	
+	public List<MerchantTransaction> getAllData() {
+		List<MerchantTransaction> allData = new ArrayList<MerchantTransaction>();
+		try {
+			merchantTxnRepo.findAll().forEach(c1 -> allData.add(c1));
+			return allData;
+		} catch (Exception e) {
+			return allData;
+		}
+
+	}
+
+	public List<Merchantdashboard> forFilter(String filter) {
+		List<Merchantdashboard> filteredData = new ArrayList<Merchantdashboard>();
+		Merchantdashboard d = new Merchantdashboard();
+		if (filter.equals("Year")) {
+
+			try {
+				int all = merchantTxnRepo.SumInLastYear();
+				d.setAll(all);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setAll(0);
+			}
+
+			try {
+				int allBycredit = merchantTxnRepo.SumInLastYearByCredit();
+				d.setByCredit(allBycredit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByCredit(0);
+			}
+
+			try {
+
+				int allBydebit = merchantTxnRepo.SumInLastYearByDebit();
+				d.setByDebit(allBydebit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByDebit(0);
+			}
+
+			try {
+
+				int today = merchantTxnRepo.SumForToday();
+				d.setForToday(today);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setForToday(0);
+			}
+
+			filteredData.add(d);
+			return filteredData;
+
+		}
+
+		else if (filter.equals("Month")) {
+
+			try {
+				int all = merchantTxnRepo.SumInLastMonth();
+				d.setAll(all);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setAll(0);
+			}
+
+			try {
+				int allBycredit = merchantTxnRepo.SumInLastMonthByCredit();
+				d.setByCredit(allBycredit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByCredit(0);
+			}
+
+			try {
+				int allBydebit = merchantTxnRepo.SumInLastMonthByDebit();
+
+				d.setByDebit(allBydebit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+
+				d.setByDebit(0);
+			}
+
+			try {
+				int today = merchantTxnRepo.SumForToday();
+
+				d.setForToday(today);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+
+				d.setForToday(0);
+			}
+
+			filteredData.add(d);
+			return filteredData;
+
+		}
+
+		else if (filter.equals("Today")) {
+
+			try {
+				int all = merchantTxnRepo.SumForToday();
+				d.setAll(all);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setAll(0);
+			}
+
+			try {
+				int allBycredit = merchantTxnRepo.SumForTodayByCredit();
+				d.setByCredit(allBycredit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByCredit(0);
+			}
+
+			try {
+				int allBydebit = merchantTxnRepo.SumForTodayByDebit();
+				d.setByDebit(allBydebit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByDebit(0);
+			}
+
+			try {
+				int today = merchantTxnRepo.SumForToday();
+				d.setForToday(today);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setForToday(0);
+			}
+
+			System.out.println(d);
+
+			filteredData.add(d);
+			return filteredData;
+		}
+
+		else {
+
+			try {
+				int all = merchantTxnRepo.SumInLastWeek();
+				d.setAll(all);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setAll(0);
+			}
+
+			try {
+				int allBycredit = merchantTxnRepo.SumInLastWeekByCredit();
+				d.setByCredit(allBycredit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByCredit(0);
+			}
+
+			try {
+				int today = merchantTxnRepo.SumForToday();
+				d.setForToday(today);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setForToday(0);
+			}
+
+			try {
+				int allBydebit = merchantTxnRepo.SumInLastWeekByDebit();
+				d.setByDebit(allBydebit);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				// int all=0;
+				d.setByDebit(0);
+			}
+
+			filteredData.add(d);
+			return filteredData;
+		}
+	}
+
+	public List<Merchantdashboard> forFirstRow() {
+		List<Merchantdashboard> firstRow = new ArrayList<Merchantdashboard>();
+		Merchantdashboard d1 = new Merchantdashboard();
+
+		try {
+			int allTransaction = merchantTxnRepo.TotalAmount();
+			d1.setAll(allTransaction);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			// int all=0;
+			d1.setAll(0);
+		}
+
+		try {
+			int allTransactionBycredit = merchantTxnRepo.TotalAmountByCredit();
+			d1.setByCredit(allTransactionBycredit);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			// int all=0;
+			d1.setByCredit(0);
+		}
+
+		try {
+			int allTransactionBydebit = merchantTxnRepo.TotalAmountByDebit();
+			d1.setByDebit(allTransactionBydebit);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			// int all=0;
+
+			d1.setByDebit(0);
+		}
+
+		try {
+			int allTransactionToday = merchantTxnRepo.SumForToday();
+			d1.setForToday(allTransactionToday);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			// int all=0;
+
+			d1.setForToday(0);
+		}
+
+		firstRow.add(d1);
+		return firstRow;
+	}
+
+	public int percentage(double a, double b) {
+		double c = a / b;
+		double d = c * 100;
+		int e = (int) d;
+		return e;
+	}
+
+	public List<Integer> percentage() {
+		List<Integer> per = new ArrayList<Integer>();
+
+		double allTransaction = merchantTxnRepo.TotalTransaction();
+		double successfulTransaction = merchantTxnRepo.SuccessfuPayment();
+		double successfulCreditTransaction = merchantTxnRepo.SuccessfulCreditPayment();
+		double successfulDebitTransaction = merchantTxnRepo.SuccessfulDebitPayment();
+		double failure = allTransaction - successfulTransaction;
+
+		int perCredit = percentage(successfulCreditTransaction, successfulTransaction);
+		int perDebit = percentage(successfulDebitTransaction, successfulTransaction);
+		int perSucc = percentage(successfulTransaction, allTransaction);
+		int perFailure = percentage(failure, allTransaction);
+
+		per.add(0, perCredit);
+		per.add(1, perDebit);
+		per.add(2, perSucc);
+		per.add(3, perFailure);
+
+		return per;
+
+	}
+
+	public List<MerchantlastWeekData> lastWeek(String x) {
+		List<MerchantlastWeekData> allData = new ArrayList<MerchantlastWeekData>();
+
+		if (x.equals("Week")) {
+
+			List<String> date = new ArrayList<String>();
+			List<Integer> count = new ArrayList<Integer>();
+			merchantTxnRepo.GraphDataDateWeek().forEach(c1 -> date.add(c1));
+
+			merchantTxnRepo.GraphDataDateCountWeek().forEach(c2 -> count.add(c2));
+			// System.out.println(count);
+
+			for (int i = 0; i < date.size(); i++) {
+				MerchantlastWeekData g = new MerchantlastWeekData();
+				g.setDate(date.get(i));
+				g.setTransaction(count.get(i));
+				allData.add(g);
+
+			}
+			System.out.println("Under Week");
+			return allData;
+
+		}
+
+		else if (x.equals("Month")) {
+
+			List<String> date = new ArrayList<String>();
+			List<Integer> count = new ArrayList<Integer>();
+			merchantTxnRepo.GraphDataDateMonth().forEach(c1 -> date.add(c1));
+
+			merchantTxnRepo.GraphDataDateCountMonth().forEach(c2 -> count.add(c2));
+			// System.out.println(count);
+
+			for (int i = 0; i < date.size(); i++) {
+				MerchantlastWeekData g = new MerchantlastWeekData();
+				g.setDate(date.get(i));
+				g.setTransaction(count.get(i));
+				allData.add(g);
+
+			}
+			System.out.println("Under Month");
+			return allData;
+		}
+
+		else {
+
+			System.out.println("Else me hu");
+
+			List<String> date = new ArrayList<String>();
+			List<Integer> count = new ArrayList<Integer>();
+
+			merchantTxnRepo.GraphDataDateYear().forEach(c1 -> date.add(c1));
+
+			merchantTxnRepo.GraphDataDateCountYear().forEach(c2 -> count.add(c2));
+			// System.out.println(count);
+
+			for (int i = 0; i < date.size(); i++) {
+				MerchantlastWeekData g = new MerchantlastWeekData();
+				g.setDate(date.get(i));
+				g.setTransaction(count.get(i));
+				allData.add(g);
+				System.out.println(date.get(i));
+				System.out.println(count.get(i));
+
+			}
+
+			return allData;
+
+		}
+
 	}
 }
