@@ -38,7 +38,6 @@ public class PaymentDetails {
 	public String getCardType() {
 		return cardType;
 	}
-
 	public void setCardType(String cardType) {
 		this.cardType = cardType;
 	}

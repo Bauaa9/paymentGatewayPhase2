@@ -63,7 +63,7 @@ public class CustomerService {
 	private static SecretKeySpec secretKey;
 	private static byte[] key;
 	private static final String ALGORITHM = "AES";
-	private String secretkey = "slytherin";
+	private String secretkey = "slytherinNew";
 
 	public void prepareSecreteKey(String myKey) throws Exception {
 		MessageDigest sha = null;
@@ -76,14 +76,14 @@ public class CustomerService {
 
 	}
 
-//	public String encrypt(String strToEncrypt, String secret) throws Exception {
-//
-//		prepareSecreteKey(secret);
-//		Cipher cipher = Cipher.getInstance(ALGORITHM);
-//		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-//		return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
-//
-//	}
+	public String encrypt(String strToEncrypt, String secret) throws Exception {
+
+		prepareSecreteKey(secret);
+		Cipher cipher = Cipher.getInstance(ALGORITHM);
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+
+	}
 
 	public String decrypt(String strToDecrypt, String secret) throws Exception {
 
@@ -216,10 +216,10 @@ public class CustomerService {
 	}
 
 	public ModelSavedCardDetails addCard(ModelSavedCardDetails cd) throws Exception {
-
+		
 		cd.setCustomer_id(getUserId());
 		cd.setCard_id((int) repoCardDetails.count() + 1);
-		cd.setCard_number(cd.getCard_number());
+		cd.setCard_number(encrypt(cd.getCard_number(),secretkey));
 		System.out.println(cd.getCard_number());
 		System.out.println(decrypt(cd.getCard_number(), secretkey));
 
@@ -239,14 +239,22 @@ public class CustomerService {
 	}
 
 	public Map<String, Object> displayAll() throws Exception {
-		List<ModelSavedCardDetails> temp = repoCardDetails.findAll();
-		for (int i = 0; i < temp.size(); i++) {
-			ModelSavedCardDetails modelCard = temp.get(i);
-			modelCard.setCard_number(decrypt(modelCard.getCard_number(), secretkey));
+		try {
+			List<ModelSavedCardDetails> temp = repoCardDetails.findAll();
+
+			for (int i = 0; i < temp.size(); i++) {
+				ModelSavedCardDetails modelCard = temp.get(i);
+				modelCard.setCard_number(decrypt(modelCard.getCard_number(), secretkey));
+				System.out.println("sdfsdf23423");
+			}
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("allCards", temp);
+			return map;
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allCards", temp);
-		return map;
+		return null;
 	}
 
 	public void deleteCard(Integer cardId) {
