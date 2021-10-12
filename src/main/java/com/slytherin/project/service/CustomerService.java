@@ -59,40 +59,7 @@ public class CustomerService {
 
 	@Autowired
 	private Environment env;
-
-	private static SecretKeySpec secretKey;
-	private static byte[] key;
-	private static final String ALGORITHM = "AES";
-	private String secretkey = "slytherinNew";
-
-	public void prepareSecreteKey(String myKey) throws Exception {
-		MessageDigest sha = null;
-
-		key = myKey.getBytes(StandardCharsets.UTF_8);
-		sha = MessageDigest.getInstance("SHA-1");
-		key = sha.digest(key);
-		key = Arrays.copyOf(key, 16);
-		secretKey = new SecretKeySpec(key, ALGORITHM);
-
-	}
-
-	public String encrypt(String strToEncrypt, String secret) throws Exception {
-
-		prepareSecreteKey(secret);
-		Cipher cipher = Cipher.getInstance(ALGORITHM);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
-
-	}
-
-	public String decrypt(String strToDecrypt, String secret) throws Exception {
-
-		prepareSecreteKey(secret);
-		Cipher cipher = Cipher.getInstance(ALGORITHM);
-		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
-
-	}
+	
 
 	public Map<String, Object> getCreditDetailsFromBank() throws Exception {
 
@@ -158,20 +125,21 @@ public class CustomerService {
 
 	}
 
-	public Map<String, Object> creditcarddetails() throws Exception {
-
-		ModelSavedCardDetails obj = repoCardDetails.findCard(getUserId());
-		ModelCardlimit obj1 = repoCardLimitDetails.findLimit(obj.getCard_id());
-		obj.setCard_number(decrypt(obj.getCard_number(), secretkey));
-		Map<String, Object> map = new HashMap<String, Object>();
-		double totaloutstanding = Double.valueOf(obj1.getTotalcreditlimit())
-				- Double.valueOf(obj1.getAvailablecreditlimit());
-		map.put("cardetails", obj);
-		map.put("cardlimit", obj1);
-		map.put("totaloutstanding", totaloutstanding);
-		return map;
-
-	}
+//	public Map<String, Object> creditcarddetails() throws Exception {
+//
+//		ModelSavedCardDetails obj = repoCardDetails.findCard(getUserId());
+//		ModelCardlimit obj1 = repoCardLimitDetails.findLimit(obj.getCard_id());
+////		UtilAES utilAES = new UtilAES();
+//		obj.setCard_number(utilAES.decrypt(obj.getCard_number()));
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		double totaloutstanding = Double.valueOf(obj1.getTotalcreditlimit())
+//				- Double.valueOf(obj1.getAvailablecreditlimit());
+//		map.put("cardetails", obj);
+//		map.put("cardlimit", obj1);
+//		map.put("totaloutstanding", totaloutstanding);
+//		return map;
+//
+//	}
 
 	public Map<String, Object> getUnbilledTxn() throws Exception{
 
@@ -219,9 +187,14 @@ public class CustomerService {
 		
 		cd.setCustomer_id(getUserId());
 		cd.setCard_id((int) repoCardDetails.count() + 1);
-		cd.setCard_number(encrypt(cd.getCard_number(),secretkey));
+		UtilAES utilAES = new UtilAES();
+		cd.setCard_number(utilAES.encrypt(cd.getCard_number()));
+		cd.setCard_holder_name(utilAES.encrypt(cd.getCard_holder_name()));
+//		cd.setCard_type(utilAES.encrypt(cd.getCard_type()));
+		cd.setExpiry_date(utilAES.encrypt(cd.getExpiry_date()));
+		cd.setCvv(utilAES.encrypt(cd.getCvv()));
 		System.out.println(cd.getCard_number());
-		System.out.println(decrypt(cd.getCard_number(), secretkey));
+//		System.out.println(decrypt(cd.getCard_number(), secretkey));
 
 		return (ModelSavedCardDetails) repoCardDetails.save(cd);
 
@@ -239,12 +212,17 @@ public class CustomerService {
 	}
 
 	public Map<String, Object> displayAll() throws Exception {
+		UtilAES utilAES = new UtilAES();
 		try {
 			List<ModelSavedCardDetails> temp = repoCardDetails.findAll();
 
 			for (int i = 0; i < temp.size(); i++) {
 				ModelSavedCardDetails modelCard = temp.get(i);
-				modelCard.setCard_number(decrypt(modelCard.getCard_number(), secretkey));
+				modelCard.setCard_number(utilAES.decrypt(modelCard.getCard_number()));
+				modelCard.setCard_holder_name(utilAES.decrypt(modelCard.getCard_holder_name()));
+//				modelCard.setCard_type(utilAES.decrypt(modelCard.getCard_type()));
+				modelCard.setCvv(utilAES.decrypt(modelCard.getCvv()));
+				modelCard.setExpiry_date(utilAES.decrypt(modelCard.getExpiry_date()));
 				System.out.println("sdfsdf23423");
 			}
 			Map<String, Object> map = new HashMap<String, Object>();
