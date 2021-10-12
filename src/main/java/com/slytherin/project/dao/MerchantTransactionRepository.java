@@ -81,10 +81,10 @@ public interface MerchantTransactionRepository extends JpaRepository<MerchantTra
 	public int SuccessfuPayment();
 
 	// Data For Graph in Week
-	@Query(value = "select distinct date from merchant_transaction_details where DATE(date) BETWEEN DATE_SUB( CURDATE( ) ,INTERVAL 1 WEEK ) AND CURDATE()", nativeQuery = true)
+	@Query(value = "select distinct date from merchant_transaction_details where DATE(date) BETWEEN DATE_SUB( CURDATE( ) ,INTERVAL 1 WEEK ) AND CURDATE() order by date", nativeQuery = true)
 	public List<String> GraphDataDateWeek();
 
-	@Query(value = "select COUNT(*) as TOTALTRIP from merchant_transaction_details  where DATE(date) BETWEEN DATE_SUB( CURDATE( ) ,INTERVAL 1 WEEK ) AND CURDATE() group by date ", nativeQuery = true)
+	@Query(value = "select COUNT(*) as TOTALTRIP from merchant_transaction_details  where DATE(date) BETWEEN DATE_SUB( CURDATE( ) ,INTERVAL 1 WEEK ) AND CURDATE() group by date order by date", nativeQuery = true)
 	public List<Integer> GraphDataDateCountWeek();
 
 	// @Query(value="select date ,COUNT(*) as transaction from transaction_details
